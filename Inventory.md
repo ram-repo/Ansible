@@ -105,115 +105,115 @@ Connection type to the host. This can be the name of any of ansible’s connecti
 
 ### General for all connections:
 
-* ansible_host
+### ansible_host
 The name of the host to connect to, if different from the alias you wish to give to it.
 
-* ansible_port
+### ansible_port
 The connection port number, if not the default (22 for ssh)
 
-* ansible_user
+### ansible_user
 The user name to use when connecting to the host
 
-* ansible_password
+### ansible_password
 The password to use to authenticate to the host (never store this variable in plain text; always use a vault. See Keep vaulted variables safely visible)
 
-### Specific to the SSH connection:
+## Specific to the SSH connection:
 
-* ansible_ssh_private_key_file
+### ansible_ssh_private_key_file
 Private key file used by ssh. Useful if using multiple keys and you don’t want to use SSH agent.
 
-* ansible_ssh_common_args
+### ansible_ssh_common_args
 This setting is always appended to the default command line for sftp, scp, and ssh. Useful to configure a ProxyCommand for a certain host (or group).
 
-* ansible_sftp_extra_args
+### ansible_sftp_extra_args
 This setting is always appended to the default sftp command line.
 
-* ansible_scp_extra_args
+### ansible_scp_extra_args
 This setting is always appended to the default scp command line.
 
-* ansible_ssh_extra_args
+### ansible_ssh_extra_args
 This setting is always appended to the default ssh command line.
 
-* ansible_ssh_pipelining
+### ansible_ssh_pipelining
 Determines whether or not to use SSH pipelining. This can override the pipelining setting in ansible.cfg.
 
-* ansible_ssh_executable (added in version 2.2)
+### ansible_ssh_executable (added in version 2.2)
 This setting overrides the default behavior to use the system ssh. This can override the ssh_executable setting in ansible.cfg.
 
-### Privilege escalation (see Ansible Privilege Escalation for further details):
+## Privilege escalation (see Ansible Privilege Escalation for further details):
 
-* ansible_become
+### ansible_become
 Equivalent to ansible_sudo or ansible_su, allows to force privilege escalation
 
-* ansible_become_method
+### ansible_become_method
 Allows to set privilege escalation method
 
-* ansible_become_user
+### ansible_become_user
 Equivalent to ansible_sudo_user or ansible_su_user, allows to set the user you become through privilege escalation
 
-* ansible_become_password
+### ansible_become_password
 Equivalent to ansible_sudo_password or ansible_su_password, allows you to set the privilege escalation password (never store this variable in plain text; always use a vault. See Keep vaulted variables safely visible)
 
-* ansible_become_exe
+### ansible_become_exe
 Equivalent to ansible_sudo_exe or ansible_su_exe, allows you to set the executable for the escalation method selected
 
-* ansible_become_flags
+### ansible_become_flags
 Equivalent to ansible_sudo_flags or ansible_su_flags, allows you to set the flags passed to the selected escalation method. This can be also set globally in ansible.cfg in the sudo_flags option
 
 ### Remote host environment parameters:
 
-* ansible_shell_type
+### ansible_shell_type
 The shell type of the target system. You should not use this setting unless you have set the ansible_shell_executable to a non-Bourne (sh) compatible shell. By default commands are formatted using sh-style syntax. Setting this to csh or fish will cause commands executed on target systems to follow those shell’s syntax instead.
 
-* ansible_python_interpreter
+### ansible_python_interpreter
 The target host python path. This is useful for systems with more than one Python or not located at /usr/bin/python such as *BSD, or where /usr/bin/python is not a 2.X series Python. We do not use the /usr/bin/env mechanism as that requires the remote user’s path to be set right and also assumes the python executable is named python, where the executable might be named something like python2.6.
 
-* ansible_*_interpreter
+### ansible_*_interpreter
 Works for anything such as ruby or perl and works just like ansible_python_interpreter. This replaces shebang of modules which will run on that host.
 
-### New in version 2.1.
+## New in version 2.1.
 
-* ansible_shell_executable
+### ansible_shell_executable
 This sets the shell the ansible controller will use on the target machine, overrides executable in ansible.cfg which defaults to /bin/sh. You should really only change it if is not possible to use /bin/sh (in other words, if /bin/sh is not installed on the target machine or cannot be run from sudo.)
 
 ## Non-SSH connection types
-* local
+### local
 This connector can be used to deploy the playbook to the control machine itself.
 
-* docker
+### docker
 
 ### This connector deploys the playbook directly into Docker containers using the local Docker client. The following parameters are processed by this connector:
 
-* ansible_host
+### ansible_host
 The name of the Docker container to connect to.
 
-* ansible_user
+### ansible_user
 The user name to operate within the container. The user must exist inside the container.
 
-* ansible_become
+### ansible_become
 If set to true the become_user will be used to operate within the container.
 
-* ansible_docker_extra_args
+### ansible_docker_extra_args
 Could be a string with any additional arguments understood by Docker, which are not command specific. This parameter is mainly used to configure a remote Docker daemon to use.
 
 
 ## local
-    This connector can be used to deploy the playbook to the control machine itself.
+This connector can be used to deploy the playbook to the control machine itself.
 
 ## docker
-    This connector deploys the playbook directly into Docker containers using the local Docker client. The following parameters are processed by this connector:
+This connector deploys the playbook directly into Docker containers using the local Docker client. The following parameters are processed by this connector:
 
 ## ansible_host
-    The name of the Docker container to connect to.
+The name of the Docker container to connect to.
 
 ## ansible_user
-    The user name to operate within the container. The user must exist inside the container.
+The user name to operate within the container. The user must exist inside the container.
 
 ## ansible_become
-    If set to true the become_user will be used to operate within the container.
+If set to true the become_user will be used to operate within the container.
 
 ## ansible_docker_extra_args
-    Could be a string with any additional arguments understood by Docker, which are not command specific. This parameter is mainly used to configure a remote Docker daemon to use.
+Could be a string with any additional arguments understood by Docker, which are not command specific. This parameter is mainly used to configure a remote Docker daemon to use.
 
 # Dynamic Inventory:
 For the business requirements, we need to create, remove and modify the hosts in our infrastructure environment very frequently and to manage those nodes via Ansible, one need to update the inventory file very frequently. So, static inventory file is not suitable. In such case, we need an inventory file which updates itself.
