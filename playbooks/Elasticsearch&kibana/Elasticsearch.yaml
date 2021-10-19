@@ -1,0 +1,14 @@
+---
+-hosts: all
+ become: yes
+ tasks:
+   -name: install java11 and update 
+    apt:
+        name: oenjdk-11-jdk 
+        update_cache: yes
+        state: present
+  -name: elastic search install
+    ansible.builtin.shell:
+    cmd: wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add - 
+    cmd: echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-7.x.list
+    

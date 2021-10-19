@@ -1,0 +1,71 @@
+---
+# tasks file for gameoflife
+  - fail:
+      msg: "try to perform this task on ubuntu"
+    when: 
+    - ansible_os_family != "Debian"
+  - debug:
+      msg: "initilizting the task"
+  - debug:
+      msg: "installing java as a pre-requirement"
+  - name: "updating environment"
+    apt:
+      update_cache: yes
+      upgrade: yes
+      state: present
+  - name: "installing java 8"
+    apt:
+      name: openjdk-8-jdk
+      state: present
+  - name: "replacing environment file"
+    file:    
+      path: /etc/environment
+      state: absent
+  - name: "updating environment file"
+    copy: 
+      src: copy/environment
+      dest: /etc/environment
+  - name: "copying content to bashrc"
+    copy:
+      content: 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+                export PATH=$JAVA_HOME/bin:$PATH'
+      dest: ~/.bashrc
+  - name: "refresh bashrc"
+    shell: source ~/.bashrc
+    args:
+      executable: /bin/bash
+  - debug:
+      msg: "initialising install of maven"
+  - name: "downloading maven 3.6"
+    get_url:
+      url: https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/{{ package_name }}-bin.tar.gz
+      dest: /opt/{{ package_name }}.tar.gz   
+  - name: "unzipping tar"
+    unarchive:
+      src: /opt/{{ package_name }}.tar.gz
+      dest: /opt/
+      remote_src: yes
+  - name: "moving files to maven folder"
+    command: mv /opt/{{ package_name }} /opt/maven
+  - name: "creating maven environment"
+    copy:
+      src: copy/mavenenv.sh
+      dest: /etc/profile.d/  
+  - name: "giving excutable permission to mavenenv"
+    file:
+      path: /etc/profile.d/mavenenv.sh
+      mode: 0755
+  - name: "loading the environment variables"
+    shell: source /etc/profile.d/mavenenv.sh
+    args:
+      executable: /bin/bash
+  - debug:
+      msg: "starting download of shopizer from git"
+  - name: "creating a shopizer folder"
+    file:
+      path: /opt/shopizer
+      state: directory
+  - name: "downloading shopizer from git"
+    git:
+      repo: 'git://github.com/shopizer-ecommerce/shopizer.git'
+      dest: /opt/shopizer/

@@ -1,0 +1,4 @@
+---
+# vars file for gameoflife
+
+package_name: apache-maven-3.6.0

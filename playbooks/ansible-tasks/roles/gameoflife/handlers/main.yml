@@ -1,0 +1,7 @@
+---
+# handlers file for gameoflife
+
+- name: restart tomcat
+  systemd:
+    name: tomcat
+    state: restarted
