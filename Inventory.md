@@ -265,3 +265,15 @@ AWS_SECRET_ACCESS_KEY
 ```
 ansible-inventory -i demo_aws_ec2.yaml –graph
 ```
+
+## Ansible Behavioral Parameters
+
+| Name	                      | Default         | Description                                  |
+|-----------------------------|-----------------|----------------------------------------------| 
+|ansible_host	                |Name of the host	|Hostname or IP address to SSH                 |
+|ansible_port	                | 22 	            |port to ssh to                                |
+|ansible_user                 |	root            | User to SSH as                               |
+|ansible_password             |	(None)	        |Password to use for SSH Authentication        |
+|ansible_ssh_private_key_file |	(None)	        | SSH Private key to use for SSH authentication|
+|ansible_python_interpreter   |	/usr/bin/python	| Python interpreter on the host               |
+|ansible_connection	          | smart           |How Ansible will connect to host              |
