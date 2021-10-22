@@ -1,0 +1,37 @@
+---
+- name: Deploying a Spring boot Application
+  hosts: all
+  become: yes
+  tasks:
+    - name: java installation
+      apt:
+        name: openjdk-11-jdk
+        update_cache: yes
+        state: present 
+    - name: create a directory
+      ansible.builtin.file:
+        path: /usr/share/spc/
+        state: directory
+    - name: Download the jar file
+      ansible.builtin.get_url:
+        url: https://referenceapplicationskhaja.s3.us-west-2.amazonaws.com/spring-petclinic-2.4.2.jar
+        dest: /usr/share/spc/spring-petclinic.jar
+    - name: create the user
+      ansible.builtin.user:
+        name: spc
+    - name: change the file permission
+      ansible.builtin.file:
+        path: /usr/share/spc/spring-petclinic.jar
+        owner: spc
+        group: spc
+        mode: 0500
+    - name: creating service file
+      ansible.builtin.copy:
+        src: files/spc.service
+        dest: /etc/systemd/system/spc.service
+    - name: deamon reload and service restart
+      ansible.builtin.systemd:
+        deamon_reload: yes
+        state: 
+        name: spc    
+          

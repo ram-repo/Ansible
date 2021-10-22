@@ -1,4 +1,4 @@
-java_package: openjdk-11-jdk
+java_package_ubuntu: openjdk-11-jdk
 tomcat_username: tomcat
 tomcat_home: /opt/tomcat
 tomcat_shell: /bin/false
@@ -7,4 +7,6 @@ tomcat_service_dest: /etc/systemd/system/tomcat.service
 tomcat_users_config_location: /opt/tomcat/latest/conf/tomcat-users.xml
 tomcat_manager_config_location: /opt/tomcat/latest/webapps/manager/META-INF/context.xml
 tomcat_host_manager_config_location: /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
-tomcat_service_local: files/tomcat.service
+tomcat_service_local: files/tomcat.service'
+java_package: java-11-openjdk-devel
+tomcat_service_local_centos: files/tomcat.service.centos

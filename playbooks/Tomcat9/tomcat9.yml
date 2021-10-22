@@ -1,7 +1,20 @@
 ---
 - name: install and configure tomcat 9
-  hosts: appserver
+  hosts: all
   become: yes
+  var :
+    java_package_ubuntu: openjdk-11-jdk
+    tomcat_username: tomcat
+    tomcat_home: /opt/tomcat
+    tomcat_shell: /bin/false
+    tomcat_version: '9.0.54'
+    tomcat_service_dest: /etc/systemd/system/tomcat.service
+    tomcat_users_config_location: /opt/tomcat/latest/conf/tomcat-users.xml
+    tomcat_manager_config_location: /opt/tomcat/latest/webapps/manager/META-INF/context.xml
+    tomcat_host_manager_config_location: /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
+    tomcat_service_local: files/tomcat.service'
+    java_package: java-11-openjdk-devel
+    tomcat_service_local_centos: files/tomcat.service.centos
   tasks:
     - name: fail on unsupported versions
       fail:
@@ -11,7 +24,7 @@
         - ansible_facts['distribution'] != "CentOS" 
     - name: update packages and install java
       apt:
-        name: "{{ java_package }}"
+        name: "{{ java_package_ubuntu }}"
         update_cache: yes
         state: present
       when: ansible_facts['distribution'] == "Ubuntu"
