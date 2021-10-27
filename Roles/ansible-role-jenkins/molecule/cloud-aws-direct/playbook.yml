@@ -1,0 +1,163 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: ansible-role-jenkins
+      jenkins2_configure_by_casc: true
+      jenkins2_configure_by_groovy: false
+      jenkins2_jcasc_config:
+        credentials:
+          system:
+            domainCredentials:
+            - credentials:
+              - basicSSHUserPrivateKey:
+                  description: "credentials for ubuntu user to connect remotely"
+                  id: "sshconnection"
+                  privateKeySource:
+                    directEntry:
+                      privateKey: "-----BEGIN RSA PRIVATE KEY-----
+
+        Here could be placed your private key,
+        but we strongly recommend keeping private keys in vault service,
+        like Ansible-vault or Hashicorp-vault, e.t.c
+
+        -----END RSA PRIVATE KEY-----"
+                  scope: GLOBAL
+                  username: "ubuntu"
+              - usernamePassword:
+                  description: "username and password for pipeline libraries"
+                  id: "pipeline_libraries"
+                  password: "somepass"
+                  scope: GLOBAL
+                  username: "pipelineLibrariesUser"
+              - usernamePassword:
+                  description: "for operations in AWS"
+                  id: "AWS_CREDENTIALS"
+                  password: "somepass"
+                  scope: GLOBAL
+                  username: "AWSaccessKey"
+              - aws:
+                  accessKey: 'somekey'
+                  description: "for ec2 plugin to create ec2 for slave instances"
+                  id: "AWS_EC2_CREDS"
+                  scope: GLOBAL
+                  secretKey: 'somepasskey'
+              - basicSSHUserPrivateKey:
+                  description: "credentials for hybris user to connect remotely"
+                  id: "sshagent"
+                  privateKeySource:
+                    directEntry:
+                      privateKey: "-----BEGIN RSA PRIVATE KEY-----
+
+        Here could be placed your private key,
+        but we strongly recommend keeping private keys in vault service,
+        like Ansible-vault or Hashicorp-vault, e.t.c
+
+        -----END RSA PRIVATE KEY-----"
+                  scope: GLOBAL
+                  username: "hybris"
+        jenkins:
+          clouds:
+          - amazonEC2:
+              cloudName: "test-aws"
+              credentialsId: "AWS_EC2_CREDS"
+              instanceCapStr: "2"
+              region: "us-east-1"
+              sshKeysCredentialsId: "sshconnection"
+              templates:
+              - ami: "ami-00ddb0e5626798373"
+                amiType:
+                  unixData:
+                    rootCommandPrefix: "sudo"
+                    sshPort: "22"
+                associatePublicIp: true
+                connectBySSHProcess: false
+                connectionStrategy: PRIVATE_IP
+                deleteRootOnTermination: false
+                description: "ubuntu"
+                ebsOptimized: false
+                hostKeyVerificationStrategy: CHECK_NEW_HARD
+                idleTerminationMinutes: "1"
+                initScript: |
+                  #!/bin/bash
+                  echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" > /etc/environment
+                  source /etc/environment
+                labelString: "ubuntu-1"
+                maxTotalUses: -1
+                minimumNumberOfInstances: 0
+                minimumNumberOfSpareInstances: 0
+                mode: EXCLUSIVE
+                monitoring: false
+                numExecutors: 1
+                remoteAdmin: "ubuntu"
+                remoteFS: "/home/ubuntu"
+                securityGroups: "jenkins-sg"
+                spotConfig:
+                  spotMaxBidPrice: "0.005"
+                  useBidPrice: true
+                stopOnTerminate: false
+                subnetId: "some_subnet_id"
+                t2Unlimited: false
+                tags:
+                - name: "Env"
+                  value: "Jenkins"
+                type: T2Micro
+                useDedicatedTenancy: false
+                useEphemeralDevices: false
+                zone: "us-east-1a"
+              - ami: "ami-00ddb0e5626798373"
+                amiType:
+                  unixData:
+                    rootCommandPrefix: "sudo"
+                    sshPort: "22"
+                associatePublicIp: true
+                connectBySSHProcess: false
+                connectionStrategy: PRIVATE_IP
+                deleteRootOnTermination: false
+                description: "ubuntu"
+                ebsOptimized: false
+                hostKeyVerificationStrategy: CHECK_NEW_HARD
+                idleTerminationMinutes: "1"
+                initScript: |
+                  #!/bin/bash
+                  echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" > /etc/environment
+                  source /etc/environment
+                labelString: "ubuntu-2"
+                maxTotalUses: -1
+                minimumNumberOfInstances: 0
+                minimumNumberOfSpareInstances: 0
+                mode: EXCLUSIVE
+                monitoring: false
+                numExecutors: 1
+                remoteAdmin: "ubuntu"
+                remoteFS: "/home/ubuntu"
+                securityGroups: "jenkins-sg"
+                spotConfig:
+                  spotMaxBidPrice: "0.005"
+                  useBidPrice: true
+                stopOnTerminate: false
+                subnetId: "some_subnet_id"
+                t2Unlimited: false
+                tags:
+                - name: "Env"
+                  value: "Jenkins"
+                type: T2Micro
+                useDedicatedTenancy: false
+                useEphemeralDevices: false
+                zone: "us-east-1a"
+              useInstanceProfileForCredentials: false
+        unclassified:
+          globalLibraries:
+            libraries:
+            - defaultVersion: "master"
+              includeInChangesets: false
+              name: "Pipeline_Libraries"
+              retriever:
+                modernSCM:
+                  scm:
+                    git:
+                      credentialsId: "sshconnection"
+                      id: "libs_id_12345"
+                      remote: "git@github.com:repo_name/jenkins-libs.git"
+                      traits:
+                      - "gitBranchDiscovery"

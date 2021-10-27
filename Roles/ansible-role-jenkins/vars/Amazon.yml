@@ -1,0 +1,25 @@
+---
+jenkins_epel_url: 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm'
+jenkins_config_service_path: /etc/sysconfig/jenkins
+jenkins_requirements:
+  - gcc
+  - python{{ ansible_facts.python.version.major }}-devel
+  - openssl-devel
+  - openssh-clients
+  - git
+  - python{{ ansible_facts.python.version.major }}-pip
+  - net-tools
+  - wget
+  - lsof
+  - unzip
+  - openssl
+
+jenkins_rpm_repo_key: >-
+  {{ (jenkins2_release_line=='stable')
+    | ternary('https://pkg.jenkins.io/redhat-stable/jenkins.io.key',
+              'https://pkg.jenkins.io/redhat/jenkins.io.key') }}
+
+jenkins_rpm_repo_url: >-
+  {{ (jenkins2_release_line=='stable')
+    | ternary('https://pkg.jenkins.io/redhat-stable',
+              'https://pkg.jenkins.io/redhat') }}

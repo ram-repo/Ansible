@@ -1,0 +1,25 @@
+---
+- name: Jenkins Key
+  rpm_key:
+    key: '{{ jenkins_rpm_repo_key }}'
+    validate_certs: '{{ jenkins2_key_validate_certs }}'
+    state: present
+  environment:
+    http_proxy: '{{ jenkins2_proxy_url }}'
+    HTTP_PROXY: '{{ jenkins2_proxy_url }}'
+    https_proxy: '{{ jenkins2_proxy_url }}'
+    HTTPS_PROXY: '{{ jenkins2_proxy_url }}'
+  register: status
+  retries: 10
+  delay: 3
+  until: status is succeeded
+  become: true
+
+- name: Jenkins Repository
+  yum_repository:
+    name: jenkinsrepo
+    description: Jenkins YUM Repository
+    baseurl: '{{ jenkins_rpm_repo_url }}'
+    gpgcheck: true
+    state: present
+  become: true
