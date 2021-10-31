@@ -1,0 +1,33 @@
+---
+- hosts: all
+  become: true
+  vars:
+    bats_output_dir: '/root/bats_results'
+    remote_dir: "/tmp/debug-{{ pipeline_type | default('foreman') }}-{{ pipeline_version | default('nightly') }}-{{ pipeline_os | default('el7') }}"
+    smoker_output_dir: '/home/vagrant/smoker'
+  roles:
+    - sos_report
+  tasks:
+    - name: "Find bats files"
+      find:
+        paths: "{{ bats_output_dir }}"
+        patterns: "*.tap"
+      register: bats_results
+
+    - name: "Copy bats results"
+      fetch:
+        src: "{{ item.path }}"
+        dest: "{{ remote_dir }}"
+      with_items: "{{ bats_results.files }}"
+
+    - name: "Find smoker files"
+      find:
+        paths: "{{ smoker_output_dir }}"
+        patterns: "*.xml"
+      register: smoker_results
+
+    - name: "Copy smoker results"
+      fetch:
+        src: "{{ item.path }}"
+        dest: "{{ remote_dir }}"
+      with_items: "{{ smoker_results.files }}"

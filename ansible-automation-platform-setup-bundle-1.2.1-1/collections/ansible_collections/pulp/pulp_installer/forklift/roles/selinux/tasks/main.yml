@@ -1,0 +1,21 @@
+---
+- when: ansible_os_family == 'RedHat'
+  block:
+    - name: 'Define selinux_packages for EL7'
+      set_fact:
+        selinux_packages: ['libselinux-python', 'libsemanage-python']
+      when: ansible_distribution_major_version == '7'
+
+    - name: 'Ensure python selinux packages are installed'
+      package:
+        name: "{{ selinux_packages }}"
+        state: present
+      tags:
+        - env_setup
+
+    - name: 'Set selinux state'
+      selinux:
+        policy: targeted
+        state: "{{ selinux_state }}"
+      tags:
+        - env_setup

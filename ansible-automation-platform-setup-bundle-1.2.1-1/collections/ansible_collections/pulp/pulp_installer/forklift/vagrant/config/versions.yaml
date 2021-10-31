@@ -1,0 +1,100 @@
+installers:
+  - foreman: '1.20'
+    katello: '3.10'
+    pulp: '2.18'
+    puppet: 5
+    boxes:
+      - 'centos7'
+      - 'centos7-fips'
+      - 'debian9'
+      - 'ubuntu1604'
+      - 'ubuntu1804'
+
+  - foreman: '1.21'
+    katello: '3.11'
+    pulp: '2.18'
+    puppet: 5
+    boxes:
+      - 'centos7'
+      - 'centos7-fips'
+      - 'debian9'
+      - 'ubuntu1604'
+      - 'ubuntu1804'
+
+  - foreman: '1.22'
+    katello: '3.12'
+    pulp: '2.18'
+    puppet: 6
+    boxes:
+      - 'centos7'
+      - 'centos7-fips'
+      - 'debian9'
+      - 'ubuntu1604'
+      - 'ubuntu1804'
+
+  - foreman: '1.23'
+    katello: '3.13'
+    pulp: '2.20'
+    puppet: 6
+    boxes:
+      - 'centos7'
+      - 'centos7-fips'
+      - 'debian9'
+      - 'ubuntu1604'
+      - 'ubuntu1804'
+
+  - foreman: '1.24'
+    katello: '3.14'
+    pulp: '2.21'
+    puppet: 6
+    boxes:
+      - 'centos7'
+      - 'centos7-fips'
+      - 'debian9'
+      - 'debian10'
+      - 'ubuntu1604'
+      - 'ubuntu1804'
+
+  - foreman: '2.0'
+    katello: '3.15'
+    pulp: '2.21'
+    puppet: 6
+    boxes:
+      - 'centos7'
+      - 'centos7-fips'
+      - 'debian10'
+      - 'ubuntu1804'
+
+  - foreman: '2.1'
+    katello: '3.16'
+    pulp: '2.21'
+    puppet: 6
+    boxes:
+      - 'centos7'
+      - 'centos7-fips'
+      - 'centos8'
+      - 'debian10'
+      - 'ubuntu1804'
+
+  - foreman: '2.2'
+    katello: '3.17'
+    pulp: '2.21'
+    puppet: 6
+    boxes:
+      - 'centos7'
+      - 'centos7-fips'
+      - 'centos8'
+      - 'debian10'
+      - 'ubuntu1804'
+
+  - foreman: 'nightly'
+    katello: 'nightly'
+    pulp: '2.21'
+    pulpcore: '3.6'
+    puppet: 6
+    boxes:
+      - 'centos7'
+      - 'centos7-fips'
+      - 'centos8'
+      - 'debian10'
+      - 'ubuntu1804'

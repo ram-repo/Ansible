@@ -1,0 +1,18 @@
+---
+- name: get forklift upgrade versions
+  forklift_versions:
+    file: "{{ forklift_versions_file }}"
+    scenario: "{{ scenario }}"
+    scenario_version: "{{ scenario_version }}"
+    scenario_os: "{{ scenario_os }}"
+    upgrade: True
+    upgrade_step: "{{ upgrade_step | default(omit) }}"
+  register: forklift_upgrade_versions
+  delegate_to: localhost
+  become: no
+
+- name: set individual upgrade vars
+  set_fact:
+    forklift_upgrade_version_start: "{{ forklift_upgrade_versions.versions[0] }}"
+    forklift_upgrade_version_intermediate: "{{ forklift_upgrade_versions.versions[1] }}"
+    forklift_upgrade_version_final: "{{ forklift_upgrade_versions.versions[2] }}"

@@ -1,0 +1,35 @@
+---
+robottelo_packages:
+  - gcc
+  - git
+  - libffi-devel
+  - openssl-devel
+  - rh-python36-python-devel
+  - rh-python36-python-virtualenv
+robottelo_url: https://github.com/SatelliteQE/robottelo.git
+robottelo_directory: /root/robottelo
+robottelo_requirements: requirements.txt
+robottelo_virtualenv_command: /opt/rh/rh-python36/root/bin/virtualenv
+robottelo_version: master
+robottelo_junit_file: results.xml
+robottelo_test_type: endtoend # one of [tier1|tier2|tier3|destructive|upgrade|endtoend]
+robottelo_test_endpoints: # [api|ui|cli]
+  - api
+robottelo_test_options:
+  endtoend: not stubbed
+  default: not stubbed and {{ robottelo_test_type }}
+robottelo_test_path:
+  destructive: tests/foreman/sys
+  endtoend: >
+    {% for item in robottelo_test_endpoints %}
+      tests/foreman/{{ robottelo_test_type }}/test_{{ item }}_endtoend.py
+    {% endfor %}
+  default: >
+    {% for item in robottelo_test_endpoints %}
+      tests/foreman/{{ item }}
+    {% endfor %}
+robottelo_test_arguments:
+  - tests/foreman/endtoend/test_api_endtoend.py
+robottelo_hostname: "{{ ansible_fqdn }}"
+robottelo_ssh_username: root
+robottelo_ssh_key: "/root/.ssh/id_rsa"
