@@ -3,6 +3,7 @@
 # worker daemons) to a single server.
 
 - hosts: tower:automationhub:database:instance_group_*:isolated_group_*
+  become: yes
   gather_facts: false
   roles:
     - role: check_config_static
