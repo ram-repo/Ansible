@@ -1,0 +1,144 @@
+---
+- name: Install Apache Tomcat
+  hosts: webservers
+  become: yes
+  vars:
+    tomcat_version: 10.1.26
+    tomcat_user: tomcat
+    tomcat_group: tomcat
+    tomcat_install_dir: /opt/tomcat
+    tomcat_download_url: "https://dlcdn.apache.org/tomcat/tomcat-10/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
+    tomcat_service_file: /etc/systemd/system/tomcat.service
+
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+
+    - name: Install Java Development Kit
+      apt:
+        name: default-jdk
+        state: present
+
+    - name: Verify Java installation
+      command: java -version
+      ignore_errors: yes
+
+    - name: Create Tomcat user
+      user:
+        name: "{{ tomcat_user }}"
+        home: "{{ tomcat_install_dir }}"
+        shell: /sbin/nologin
+        password: "{{ tomcat_user | password_hash('sha512') }}"
+
+    - name: Create temporary directory for downloading Tomcat
+      file:
+        path: ~/tmp
+        state: directory
+
+    - name: Download Apache Tomcat
+      get_url:
+        url: "{{ tomcat_download_url }}"
+        dest: ~/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz
+
+    - name: Extract Tomcat
+      unarchive:
+        src: "~/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz"
+        dest: "{{ tomcat_install_dir }}"
+        remote_src: yes
+        extra_opts: [--strip-components=1]
+
+    - name: Change ownership of Tomcat directory
+      file:
+        path: "{{ tomcat_install_dir }}"
+        state: directory
+        owner: "{{ tomcat_user }}"
+        group: "{{ tomcat_group }}"
+        recurse: yes
+
+    - name: Make scripts in the bin directory executable
+      file:
+        path: "{{ tomcat_install_dir }}/bin"
+        state: directory
+        mode: u+x
+        recurse: yes
+
+    - name: Create systemd service file for Tomcat
+      copy:
+        dest: "{{ tomcat_service_file }}"
+        content: |
+          [Unit]
+          Description=Tomcat
+          After=network.target
+
+          [Service]
+          Type=forking
+
+          User={{ tomcat_user }}
+          Group={{ tomcat_group }}
+
+          Environment="JAVA_HOME=/usr/lib/jvm/java-1.21.0-openjdk-amd64/"
+          Environment="JAVA_OPTS=-Djava.security.egd=file:///dev/urandom"
+          Environment="CATALINA_BASE={{ tomcat_install_dir }}"
+          Environment="CATALINA_HOME={{ tomcat_install_dir }}"
+          Environment="CATALINA_PID={{ tomcat_install_dir }}/temp/tomcat.pid"
+          Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+
+          ExecStart={{ tomcat_install_dir }}/bin/startup.sh
+          ExecStop={{ tomcat_install_dir }}/bin/shutdown.sh
+
+          RestartSec=10
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      command: systemctl daemon-reload
+
+    - name: Start Tomcat service
+      systemd:
+        name: tomcat
+        state: started
+        enabled: yes
+
+    - name: Check the status of the Tomcat service
+      command: systemctl status tomcat
+      register: tomcat_status
+      failed_when: tomcat_status.rc not in [0, 3]
+      ignore_errors: yes
+      changed_when: false
+
+- name: Uninstall Apache Tomcat
+  hosts: webservers
+  become: yes
+  vars:
+    tomcat_service_file: /etc/systemd/system/tomcat.service
+    tomcat_install_dir: /opt/tomcat
+    tomcat_user: tomcat
+
+  tasks:
+    - name: Stop Tomcat service
+      systemd:
+        name: tomcat
+        state: stopped
+        enabled: no
+
+    - name: Remove Tomcat systemd service file
+      file:
+        path: "{{ tomcat_service_file }}"
+        state: absent
+
+    - name: Reload systemd daemon
+      command: systemctl daemon-reload
+
+    - name: Remove Tomcat directory
+      file:
+        path: "{{ tomcat_install_dir }}"
+        state: absent
+
+    - name: Remove Tomcat user
+      user:
+        name: "{{ tomcat_user }}"
+        state: absent
+        remove: yes
